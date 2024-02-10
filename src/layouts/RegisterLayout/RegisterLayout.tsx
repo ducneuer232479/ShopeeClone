@@ -1,3 +1,6 @@
+import Footer from 'src/components/Footer'
+import RegisterHeader from 'src/components/RegisterHeader'
+
 interface Props extends React.ComponentPropsWithoutRef<'div'> {
   children?: React.ReactNode
 }
@@ -5,8 +8,9 @@ interface Props extends React.ComponentPropsWithoutRef<'div'> {
 export default function RegisterLayout({ children }: Props) {
   return (
     <div>
-      RegisterLayout
+      <RegisterHeader />
       {children}
+      <Footer />
     </div>
   )
 }
