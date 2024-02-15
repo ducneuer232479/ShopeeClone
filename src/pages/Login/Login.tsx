@@ -1,12 +1,23 @@
 import { Link } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
 
 export default function Login() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm()
+
+  const onSubmit = handleSubmit((data) => {
+    console.log(data)
+  })
+
   return (
     <div className='bg-orange'>
       <div className='px-4 mx-auto max-w-7xl'>
         <div className='grid grid-cols-1 py-12 lg:grid-cols-5 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
-            <form className='p-10 bg-white rounded shadow-sm'>
+            <form className='p-10 bg-white rounded shadow-sm' onSubmit={onSubmit}>
               <div className='text-2xl'>Đăng nhập</div>
               <div className='mt-8'>
                 <input
@@ -27,7 +38,10 @@ export default function Login() {
                 <div className='mt-1 text-red-600 text-sm min-h-[1rem]'></div>
               </div>
               <div className='mt-3'>
-                <button className='w-full px-2 py-4 text-sm text-center text-white uppercase bg-red-500 hover:bg-red-600'>
+                <button
+                  type='submit'
+                  className='w-full px-2 py-4 text-sm text-center text-white uppercase bg-red-500 hover:bg-red-600'
+                >
                   Đăng nhập
                 </button>
               </div>
