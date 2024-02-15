@@ -32,6 +32,7 @@ export default function Login() {
                 <input
                   type='password'
                   name='password'
+                  autoComplete='on'
                   className='w-full p-3 border border-gray-300 rounded-sm outline-none focus:border-gray-500 focus:shadow-sm'
                   placeholder='Password'
                 />
