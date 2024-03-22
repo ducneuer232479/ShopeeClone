@@ -10,7 +10,7 @@ export default function Login() {
   const onSubmit = handleSubmit((data) => {})
   return (
     <div className='bg-orange'>
-      <div className='px-4 mx-auto max-w-7xl'>
+      <div className='container'>
         <div className='grid grid-cols-1 py-12 lg:grid-cols-5 lg:py-32 lg:pr-10'>
           <div className='lg:col-span-2 lg:col-start-4'>
             <form className='p-10 bg-white rounded shadow-sm' onSubmit={onSubmit}>
