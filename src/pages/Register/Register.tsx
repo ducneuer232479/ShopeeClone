@@ -44,18 +44,18 @@ export default function Register() {
               })
             })
           }
-          if (formError?.email) {
-            setError('email', {
-              message: formError.email,
-              type: 'Server'
-            })
-          }
-          if (formError?.password) {
-            setError('password', {
-              message: formError.password,
-              type: 'Server'
-            })
-          }
+          // if (formError?.email) {
+          //   setError('email', {
+          //     message: formError.email,
+          //     type: 'Server'
+          //   })
+          // }
+          // if (formError?.password) {
+          //   setError('password', {
+          //     message: formError.password,
+          //     type: 'Server'
+          //   })
+          // }
         }
       }
     })
