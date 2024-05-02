@@ -87,10 +87,11 @@ export default function Header() {
                     Đơn mua
                   </Link>
                   <button
-                    xuất
                     className='block w-full px-4 py-3 text-left bg-white hover:bg-slate-100 hover:text-cyan-500'
                     onClick={handleLogout}
-                  ></button>
+                  >
+                    Đăng xuất
+                  </button>
                 </div>
               }
             >
