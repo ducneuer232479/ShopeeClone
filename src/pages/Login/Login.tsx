@@ -4,6 +4,7 @@ import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { login } from 'src/apis/auth.api'
+import Button from 'src/components/Button'
 import Input from 'src/components/Input'
 import { AppContext } from 'src/contexts/app.context'
 import { ErrorResponse } from 'src/types/utils.type'
@@ -76,12 +77,14 @@ export default function Login() {
                 errorMessage={errors.password?.message}
               />
               <div className='mt-3'>
-                <button
+                <Button
                   type='submit'
-                  className='w-full px-2 py-4 text-sm text-center text-white uppercase bg-red-500 hover:bg-red-600'
+                  className='flex items-center justify-center w-full gap-2 px-2 py-4 text-sm text-white uppercase bg-red-500 hover:bg-red-600'
+                  isPending={loginMutation.isPending}
+                  disabled={loginMutation.isPending}
                 >
                   Đăng nhập
-                </button>
+                </Button>
               </div>
               <div className='flex items-center justify-center mt-8'>
                 <span className='text-gray-300'>Bạn chưa có tài khoản?</span>
