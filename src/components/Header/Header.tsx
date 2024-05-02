@@ -1,8 +1,22 @@
 import { Link } from 'react-router-dom'
 import Popover from '../Popover'
-import { divide } from 'lodash'
+import { useMutation } from '@tanstack/react-query'
+import { logout } from 'src/apis/auth.api'
+import { useContext } from 'react'
+import { AppContext } from 'src/contexts/app.context'
 
 export default function Header() {
+  const { setIsAuthenticated, isAuthenticated } = useContext(AppContext)
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      setIsAuthenticated(false)
+    }
+  })
+
+  const handleLogout = () => {
+    logoutMutation.mutate()
+  }
   return (
     <div className='pt-2 pb-5 bg-[linear-gradient(-180deg,#f53d2d,#f63)] text-white'>
       <div className='container'>
@@ -45,37 +59,51 @@ export default function Header() {
             </svg>
           </Popover>
 
-          <Popover
-            className='flex items-center py-1 ml-6 cursor-pointer hover:text-gray-300'
-            renderPopover={
-              <div className='relative bg-white border border-gray-200 rounded-sm shadow-md'>
-                <Link
-                  to='/profile'
-                  className='block w-full px-4 py-3 text-left bg-white hover:bg-slate-100 hover:text-cyan-500'
-                >
-                  Tài khoản của tôi
-                </Link>
-                <Link
-                  to='/'
-                  className='block w-full px-4 py-3 text-left bg-white hover:bg-slate-100 hover:text-cyan-500'
-                >
-                  Đơn mua
-                </Link>
-                <button className='block w-full px-4 py-3 text-left bg-white hover:bg-slate-100 hover:text-cyan-500'>
-                  Đăng xuất
-                </button>
-              </div>
-            }
-          >
-            <div className='flex-shrink-0 w-5 h-5 mr-2'>
-              <img
-                src='https://down-vn.img.susercontent.com/file/vn-11134004-7r98o-lta8juihe9i176_tn'
-                alt='avatar'
-                className='object-cover w-full h-full rounded-full'
-              />
+          {!isAuthenticated ? (
+            <div className='flex items-center'>
+              <Link to='/register' className='mx-3 capitalize hover:text-white/70'>
+                Đăng ký
+              </Link>
+              <div className='border-r-[1px] border-r-white/40 h-4' />
+              <Link to='/login' className='mx-3 capitalize hover:text-white/70'>
+                Đăng nhập
+              </Link>
             </div>
-            <div>vutuanduc</div>
-          </Popover>
+          ) : (
+            <Popover
+              className='flex items-center py-1 ml-6 cursor-pointer hover:text-gray-300'
+              renderPopover={
+                <div className='relative bg-white border border-gray-200 rounded-sm shadow-md'>
+                  <Link
+                    to='/profile'
+                    className='block w-full px-4 py-3 text-left bg-white hover:bg-slate-100 hover:text-cyan-500'
+                  >
+                    Tài khoản của tôi
+                  </Link>
+                  <Link
+                    to='/'
+                    className='block w-full px-4 py-3 text-left bg-white hover:bg-slate-100 hover:text-cyan-500'
+                  >
+                    Đơn mua
+                  </Link>
+                  <button
+                    xuất
+                    className='block w-full px-4 py-3 text-left bg-white hover:bg-slate-100 hover:text-cyan-500'
+                    onClick={handleLogout}
+                  ></button>
+                </div>
+              }
+            >
+              <div className='flex-shrink-0 w-5 h-5 mr-2'>
+                <img
+                  src='https://down-vn.img.susercontent.com/file/vn-11134004-7r98o-lta8juihe9i176_tn'
+                  alt='avatar'
+                  className='object-cover w-full h-full rounded-full'
+                />
+              </div>
+              <div>vutuanduc</div>
+            </Popover>
+          )}
         </div>
         <div className='grid items-end grid-cols-12 gap-4 mt-4'>
           <Link to='/' className='col-span-2 '>
