@@ -17,7 +17,7 @@ export default function SortProductList() {
           </button>
           <select
             className='h-8 px-4 text-sm text-left text-black capitalize bg-white outline-none hover:bg-slate-100'
-            value=''
+            defaultValue=''
           >
             <option value='' disabled>
               Giá
