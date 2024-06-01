@@ -27,7 +27,7 @@ export default function Product({ product }: Props) {
             </div>
             <div className='ml-1 truncate text-orange'>
               <span className='text-xs'>₫</span>
-              <span>{formatCurrency(product.price)}</span>
+              <span className='text-sm'>{formatCurrency(product.price)}</span>
             </div>
           </div>
           <div className='flex items-center justify-end mt-3'>
