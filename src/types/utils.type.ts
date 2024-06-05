@@ -6,3 +6,8 @@ export interface ErrorResponse<Data> {
   message: string
   data?: Data
 }
+
+// cú pháp `-?` sẽ loại bỏ undefined của key optinal
+export type NoUndefinedField<T> = {
+  [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>>
+}
