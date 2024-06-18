@@ -8,7 +8,7 @@ import Profile from './pages/Profile'
 import { useContext } from 'react'
 import { AppContext } from './contexts/app.context'
 import path from './constants/path'
-import ProductDetail from './pages/ProductDetail'
+import ProductDetail from './pages/ProductList/components/ProductDetail'
 
 function ProtectedRoute() {
   const { isAuthenticated } = useContext(AppContext)
