@@ -6,16 +6,19 @@ import { useParams } from 'react-router-dom'
 import productApi from 'src/apis/product.api'
 import InputNumber from 'src/components/Input/InputNumber'
 import ProductRating from 'src/components/ProductRating'
-import { Product } from 'src/types/product.type'
+import { Product as ProductType, ProductListConfig } from 'src/types/product.type'
 import { formatCurrency, formatNumberToSocialStyle, getIdFromNameId, rateSale } from 'src/utils/utils'
+import Product from '../Product/Product'
 
 export default function ProductDetail() {
   const { nameId } = useParams()
   const id = getIdFromNameId(nameId as string)
+
   const { data: productDetailData } = useQuery({
     queryKey: ['product', id],
     queryFn: () => productApi.getProductDetail(id as string)
   })
+
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5])
   const [activeImage, setActiveImage] = useState('')
   const product = productDetailData?.data.data
@@ -24,6 +27,19 @@ export default function ProductDetail() {
     () => (product ? product?.images.slice(...currentIndexImages) : []),
     [product, currentIndexImages]
   )
+
+  const queryConfig: ProductListConfig = { limit: '20', page: '1', category: product?.category._id }
+
+  const { data: productsData } = useQuery({
+    queryKey: ['products', queryConfig],
+    queryFn: () => {
+      return productApi.getProducts(queryConfig)
+    },
+    staleTime: 3 * 60 * 1000,
+    enabled: Boolean(product)
+  })
+
+  console.log('productsData', productsData)
 
   useEffect(() => {
     if (product && product.images.length > 0) {
@@ -36,7 +52,7 @@ export default function ProductDetail() {
   }
 
   const next = () => {
-    if (currentIndexImages[1] < (product as Product).images.length) {
+    if (currentIndexImages[1] < (product as ProductType).images.length) {
       setCurrentIndexImages((prev) => [prev[0] + 1, prev[1] + 1])
     }
   }
@@ -140,7 +156,7 @@ export default function ProductDetail() {
                     nonActiveClassname='fill-gray-300 text-gray-300 h-4 w-4'
                   />
                 </div>
-                <div className='mx-4 h-4 w-4 w-[1px] bg-gray-300'></div>
+                <div className='w-4 h-4 mx-4 bg-gray-300'></div>
                 <div>
                   <span>{formatNumberToSocialStyle(product.sold)}</span>
                   <span className='ml-1 text-gray-500'>Đã bán</span>
@@ -206,12 +222,28 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
-      <div className='container'>
-        <div className='p-4 mt-8 bg-white shadow'>
-          <div className='p-4 text-lg capitalize rounded bg-gray-50 text-slate-700'>Mô tả sản phẩm</div>
-          <div className='mx-4 mt-12 mb-4 text-sm leading-loose'>
-            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }}></div>
+      <div className='mt-8'>
+        <div className='container'>
+          <div className='p-4 bg-white shadow'>
+            <div className='p-4 text-lg capitalize rounded bg-gray-50 text-slate-700'>Mô tả sản phẩm</div>
+            <div className='mx-4 mt-12 mb-4 text-sm leading-loose'>
+              <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description) }}></div>
+            </div>
           </div>
+        </div>
+      </div>
+      <div className='mt-8'>
+        <div className='container'>
+          <div className='text-gray-400 uppercase'>Có thể bạn cũng thích</div>
+          {productsData && (
+            <div className='grid grid-cols-2 gap-3 mt-6 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
+              {productsData.data.data.products.map((product) => (
+                <div className='col-span-1' key={product._id}>
+                  <Product product={product} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
