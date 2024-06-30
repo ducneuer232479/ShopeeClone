@@ -1,6 +1,6 @@
 import { createSearchParams, Link, useNavigate } from 'react-router-dom'
 import Popover from '../Popover'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import authApi from 'src/apis/auth.api'
 import { useContext } from 'react'
 import { AppContext } from 'src/contexts/app.context'
@@ -10,10 +10,15 @@ import { useForm } from 'react-hook-form'
 import { schema, Schema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { omit } from 'lodash'
+import { purchasesStatus } from 'src/constants/purchase'
+import purchaseApi from 'src/apis/purchase.api'
+import noproduct from 'src/assets/images/no-product.png'
+import { formatCurrency } from 'src/utils/utils'
 
 type FormData = Pick<Schema, 'name'>
 
 const nameSchema = schema.pick(['name'])
+const MAX_PURCHASES = 5
 
 export default function Header() {
   const queryConfig = useQueryConfig()
@@ -32,6 +37,17 @@ export default function Header() {
       setProfile(null)
     }
   })
+
+  // Khi chúng ta chuyển trang thì Header chỉ bị re-render
+  // Chứ không bị unmount - mouting again
+  // Tất nhiên là trừ trường hợp logout rồi nhảy sang RegisterLayout rồi nhảy vào lại
+  // Nên các query này sẽ không bị inactive => Không bị gọi lại => Không cần thiết phải set stale: Infinite
+  const { data: purchasesInCartData } = useQuery({
+    queryKey: ['purchases', { status: purchasesStatus.inCart }],
+    queryFn: () => purchaseApi.getPurchases({ status: purchasesStatus.inCart })
+  })
+
+  const purchasesInCart = purchasesInCartData?.data.data
 
   const handleLogout = () => {
     logoutMutation.mutate()
@@ -180,106 +196,48 @@ export default function Header() {
             <Popover
               renderPopover={
                 <div className='relative bg-white border border-gray-200 rounded-sm shadow-md max-w-[400px] text-sm'>
-                  <div className='p-2'>
-                    <div className='text-gray-400 capitalize'>Sản phẩm mới thêm</div>
-                    <div className='mt-5'>
-                      <div className='flex mt-4'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/c6066ab14e3911e8a2d31bd3bbe8579c_tn'
-                            alt='anh'
-                            className='object-cover w-11 h-11'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            [CÓ SHIP HỎA TỐC] 1kg Túi bóng đen hàng đẹp loại 1 cực dai đẹp đủ kích thước
+                  {purchasesInCart ? (
+                    <div className='p-2'>
+                      <div className='text-gray-400 capitalize'>Sản phẩm mới thêm</div>
+                      <div className='mt-5'>
+                        {purchasesInCart.slice(0, MAX_PURCHASES).map((purchase) => (
+                          <div className='flex py-2 mt-2 hover:bg-gray-100' key={purchase._id}>
+                            <div className='flex-shrink-0'>
+                              <img
+                                src={purchase.product.image}
+                                alt={purchase.product.name}
+                                className='object-cover w-11 h-11'
+                              />
+                            </div>
+                            <div className='flex-grow ml-2 overflow-hidden'>
+                              <div className='truncate'>{purchase.product.name}</div>
+                            </div>
+                            <div className='ml-2 flex-shirnk-0'>
+                              <span className='text-orange'>{formatCurrency(purchase.product.price)}</span>
+                            </div>
                           </div>
-                        </div>
-                        <div className='ml-2 flex-shirnk-0'>
-                          <span className='text-orange'>₫135.000</span>
-                        </div>
+                        ))}
                       </div>
-                      <div className='flex mt-4'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/c6066ab14e3911e8a2d31bd3bbe8579c_tn'
-                            alt='anh'
-                            className='object-cover w-11 h-11'
-                          />
+                      <div className='flex items-center justify-between mt-6'>
+                        <div className='text-xs text-gray-500 capitalize'>
+                          {purchasesInCart.length > MAX_PURCHASES ? purchasesInCart.length - MAX_PURCHASES : ''} Thêm
+                          hàng vào giỏ
                         </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            [CÓ SHIP HỎA TỐC] 1kg Túi bóng đen hàng đẹp loại 1 cực dai đẹp đủ kích thước
-                          </div>
-                        </div>
-                        <div className='ml-2 flex-shirnk-0'>
-                          <span className='text-orange'>₫135.000</span>
-                        </div>
-                      </div>
-                      <div className='flex mt-4'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/c6066ab14e3911e8a2d31bd3bbe8579c_tn'
-                            alt='anh'
-                            className='object-cover w-11 h-11'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            [CÓ SHIP HỎA TỐC] 1kg Túi bóng đen hàng đẹp loại 1 cực dai đẹp đủ kích thước
-                          </div>
-                        </div>
-                        <div className='ml-2 flex-shirnk-0'>
-                          <span className='text-orange'>₫135.000</span>
-                        </div>
-                      </div>
-                      <div className='flex mt-4'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/c6066ab14e3911e8a2d31bd3bbe8579c_tn'
-                            alt='anh'
-                            className='object-cover w-11 h-11'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            [CÓ SHIP HỎA TỐC] 1kg Túi bóng đen hàng đẹp loại 1 cực dai đẹp đủ kích thước
-                          </div>
-                        </div>
-                        <div className='ml-2 flex-shirnk-0'>
-                          <span className='text-orange'>₫135.000</span>
-                        </div>
-                      </div>
-                      <div className='flex mt-4'>
-                        <div className='flex-shrink-0'>
-                          <img
-                            src='https://down-vn.img.susercontent.com/file/c6066ab14e3911e8a2d31bd3bbe8579c_tn'
-                            alt='anh'
-                            className='object-cover w-11 h-11'
-                          />
-                        </div>
-                        <div className='flex-grow ml-2 overflow-hidden'>
-                          <div className='truncate'>
-                            [CÓ SHIP HỎA TỐC] 1kg Túi bóng đen hàng đẹp loại 1 cực dai đẹp đủ kích thước
-                          </div>
-                        </div>
-                        <div className='ml-2 flex-shirnk-0'>
-                          <span className='text-orange'>₫135.000</span>
-                        </div>
+                        <button className='px-4 py-2 text-white capitalize rounded-sm bg-orange hover:bg-opacity-90'>
+                          Xem giỏ hàng
+                        </button>
                       </div>
                     </div>
-                    <div className='flex items-center justify-between mt-6'>
-                      <div className='text-xs text-gray-500 capitalize'>Thêm hàng vào giỏ</div>
-                      <button className='px-4 py-2 text-white capitalize rounded-sm bg-orange hover:bg-opacity-90'>
-                        Xem giỏ hàng
-                      </button>
+                  ) : (
+                    <div className='p-2 flex h-[300px] w-[300px] items-center justify-center'>
+                      <img src={noproduct} alt='no purchase' className='w-24 h-24' />
+                      <div className='mt-3 capitalize'>Chưa có sản phẩm</div>
                     </div>
-                  </div>
+                  )}
                 </div>
               }
             >
-              <Link to='/'>
+              <Link to='/' className='relative'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -294,6 +252,9 @@ export default function Header() {
                     d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z'
                   />
                 </svg>
+                <span className='absolute top-[-5px] left-[17px] px-[9px] py-[1px] text-xs text-orange bg-white rounded-full'>
+                  {purchasesInCart?.length}
+                </span>
               </Link>
             </Popover>
           </div>
