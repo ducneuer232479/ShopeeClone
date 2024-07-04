@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import InputNumber, { InputNumberProps } from '../Input/InputNumber'
+import InputNumber, { InputNumberProps } from '../InputNumber'
 
 interface Props extends InputNumberProps {
   max?: number
