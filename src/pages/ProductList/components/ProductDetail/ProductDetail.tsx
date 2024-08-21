@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -10,7 +10,6 @@ import { formatCurrency, formatNumberToSocialStyle, getIdFromNameId, rateSale } 
 import Product from '../Product/Product'
 import QuantityController from 'src/components/QuantityController'
 import purchaseApi from 'src/apis/purchase.api'
-import { queryClient } from 'src/main'
 import { purchasesStatus } from 'src/constants/purchase'
 import { toast } from 'react-toastify'
 import path from 'src/constants/path'
@@ -19,6 +18,7 @@ export default function ProductDetail() {
   const [buyCount, setByCount] = useState(1)
   const { nameId } = useParams()
   const id = getIdFromNameId(nameId as string)
+  const queryClient = useQueryClient()
 
   const { data: productDetailData } = useQuery({
     queryKey: ['product', id],
@@ -122,6 +122,7 @@ export default function ProductDetail() {
   }
 
   if (!product) return null
+
   return (
     <div className='py-6 bg-gray-200'>
       <div className='container'>
