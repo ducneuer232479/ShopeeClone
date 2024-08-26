@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import path from 'src/constants/path'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { purchasesStatus } from 'src/constants/purchase'
+import userImage from 'src/assets/images/user.svg'
 
 import authApi from 'src/apis/auth.api'
 
@@ -98,12 +99,8 @@ export default function NavHeader() {
             </div>
           }
         >
-          <div className='flex-shrink-0 w-5 h-5 mr-2'>
-            <img
-              src='https://down-vn.img.susercontent.com/file/vn-11134004-7r98o-lta8juihe9i176_tn'
-              alt='avatar'
-              className='object-cover w-full h-full rounded-full'
-            />
+          <div className='flex-shrink-0 w-5 h-5 mr-2 '>
+            <img src={profile?.avatar || userImage} alt='avatar' className='object-cover w-full h-full rounded-full' />
           </div>
           <div>{profile?.email}</div>
         </Popover>
