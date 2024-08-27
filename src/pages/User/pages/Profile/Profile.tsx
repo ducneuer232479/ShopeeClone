@@ -1,7 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import userApi from 'src/apis/user.api'
 import Button from 'src/components/Button'
 import Input from 'src/components/Input'
@@ -14,6 +14,48 @@ import { setProfileToLS } from 'src/utils/auth'
 import { getAvatarUrl, isAxiosUnprocessableEntityError } from 'src/utils/utils'
 import { ErrorResponse } from 'src/types/utils.type'
 import InputFile from 'src/components/InputFile'
+
+function Info() {
+  const {
+    register,
+    control,
+    formState: { errors }
+  } = useFormContext<FormData>()
+  return (
+    <>
+      <div className='flex flex-col flex-wrap mt-6 sm:flex-row'>
+        <div className='sm:w-[20%] truncate pt-3 sm:text-right capitalize'>Tên</div>
+        <div className='sm:w-[80%] sm:pl-5'>
+          <Input
+            classNameInput='w-full px-3 py-2 border border-gray-300 rounded-sm outline-none focus:border-gray-500 focus:shadow-sm'
+            register={register}
+            name='name'
+            placeholder='Tên'
+            errorMessage={errors.name?.message}
+          />
+        </div>
+      </div>
+      <div className='flex flex-col flex-wrap mt-2 sm:flex-row'>
+        <div className='sm:w-[20%] truncate pt-3 sm:text-right capitalize'>Số điện thoại</div>
+        <div className='sm:w-[80%] sm:pl-5'>
+          <Controller
+            control={control}
+            name='phone'
+            render={({ field }) => (
+              <InputNumber
+                classNameInput='w-full px-3 py-2 border border-gray-300 rounded-sm outline-none focus:border-gray-500 focus:shadow-sm'
+                placeholder='Số điện thoại'
+                errorMessage={errors.phone?.message}
+                {...field}
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </div>
+      </div>
+    </>
+  )
+}
 
 type FormData = Pick<UserSchema, 'name' | 'address' | 'phone' | 'date_of_birth' | 'avatar'>
 
@@ -30,15 +72,7 @@ export default function Profile() {
 
   const { setProfile } = useContext(AppContext)
 
-  const {
-    register,
-    control,
-    formState: { errors },
-    handleSubmit,
-    setValue,
-    watch,
-    setError
-  } = useForm<FormData>({
+  const methods = useForm<FormData>({
     defaultValues: {
       name: '',
       phone: '',
@@ -48,6 +82,16 @@ export default function Profile() {
     },
     resolver: yupResolver(profileSchema)
   })
+
+  const {
+    register,
+    control,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+    watch,
+    setError
+  } = methods
 
   const avatar = watch('avatar')
 
@@ -120,93 +164,70 @@ export default function Profile() {
         <h1 className='text-lg font-medium text-gray-900 capitalize'>Hồ Sơ Của Tôi</h1>
         <div className='mt-1 text-sm text-gray-700'>Quản lý thông tin hồ sơ để bảo mật tài khoản</div>
       </div>
-      <form className='flex flex-col-reverse mt-8 md:flex-row md:items-start' onSubmit={onSubmit}>
-        <div className='flex-grow mt-6 md:pr-12 md:mt-0'>
-          <div className='flex flex-col flex-wrap sm:flex-row'>
-            <div className='sm:w-[20%] truncate pt-3 sm:text-right capitalize'>Email</div>
-            <div className='sm:w-[80%] sm:pl-5'>
-              <div className='pt-3 text-gray-700'>{profile?.email}</div>
+      <FormProvider {...methods}>
+        <form className='flex flex-col-reverse mt-8 md:flex-row md:items-start' onSubmit={onSubmit}>
+          <div className='flex-grow mt-6 md:pr-12 md:mt-0'>
+            <div className='flex flex-col flex-wrap sm:flex-row'>
+              <div className='sm:w-[20%] truncate pt-3 sm:text-right capitalize'>Email</div>
+              <div className='sm:w-[80%] sm:pl-5'>
+                <div className='pt-3 text-gray-700'>{profile?.email}</div>
+              </div>
             </div>
-          </div>
-          <div className='flex flex-col flex-wrap mt-6 sm:flex-row'>
-            <div className='sm:w-[20%] truncate pt-3 sm:text-right capitalize'>Tên</div>
-            <div className='sm:w-[80%] sm:pl-5'>
-              <Input
-                classNameInput='w-full px-3 py-2 border border-gray-300 rounded-sm outline-none focus:border-gray-500 focus:shadow-sm'
-                register={register}
-                name='name'
-                placeholder='Tên'
-                errorMessage={errors.name?.message}
-              />
+            <Info />
+            <div className='flex flex-col flex-wrap mt-2 sm:flex-row'>
+              <div className='sm:w-[20%] truncate pt-3 sm:text-right capitalize'>Địa chỉ</div>
+              <div className='sm:w-[80%] sm:pl-5'>
+                <Input
+                  classNameInput='w-full px-3 py-2 border border-gray-300 rounded-sm outline-none focus:border-gray-500 focus:shadow-sm'
+                  register={register}
+                  name='address'
+                  placeholder='Địa chỉ'
+                  errorMessage={errors.address?.message}
+                />
+              </div>
             </div>
-          </div>
-          <div className='flex flex-col flex-wrap mt-2 sm:flex-row'>
-            <div className='sm:w-[20%] truncate pt-3 sm:text-right capitalize'>Số điện thoại</div>
-            <div className='sm:w-[80%] sm:pl-5'>
-              <Controller
-                control={control}
-                name='phone'
-                render={({ field }) => (
-                  <InputNumber
-                    classNameInput='w-full px-3 py-2 border border-gray-300 rounded-sm outline-none focus:border-gray-500 focus:shadow-sm'
-                    placeholder='Số điện thoại'
-                    errorMessage={errors.phone?.message}
-                    {...field}
-                    onChange={field.onChange}
-                  />
-                )}
-              />
-            </div>
-          </div>
-          <div className='flex flex-col flex-wrap mt-2 sm:flex-row'>
-            <div className='sm:w-[20%] truncate pt-3 sm:text-right capitalize'>Địa chỉ</div>
-            <div className='sm:w-[80%] sm:pl-5'>
-              <Input
-                classNameInput='w-full px-3 py-2 border border-gray-300 rounded-sm outline-none focus:border-gray-500 focus:shadow-sm'
-                register={register}
-                name='address'
-                placeholder='Địa chỉ'
-                errorMessage={errors.address?.message}
-              />
-            </div>
-          </div>
-          <Controller
-            control={control}
-            name='date_of_birth'
-            render={({ field }) => (
-              <DateSelect errorMessage={errors.date_of_birth?.message} value={field.value} onChange={field.onChange} />
-            )}
-          />
+            <Controller
+              control={control}
+              name='date_of_birth'
+              render={({ field }) => (
+                <DateSelect
+                  errorMessage={errors.date_of_birth?.message}
+                  value={field.value}
+                  onChange={field.onChange}
+                />
+              )}
+            />
 
-          <div className='flex flex-col flex-wrap mt-2 sm:flex-row'>
-            <div className='sm:w-[20%] truncate pt-3 sm:text-right capitalize' />
-            <div className='sm:w-[80%] sm:pl-5'>
-              <Button
-                className='flex items-center px-5 text-sm text-center text-white rounded-sm h-9 bg-orange hover:bg-orange/80'
-                type='submit'
-              >
-                Lưu
-              </Button>
+            <div className='flex flex-col flex-wrap mt-2 sm:flex-row'>
+              <div className='sm:w-[20%] truncate pt-3 sm:text-right capitalize' />
+              <div className='sm:w-[80%] sm:pl-5'>
+                <Button
+                  className='flex items-center px-5 text-sm text-center text-white rounded-sm h-9 bg-orange hover:bg-orange/80'
+                  type='submit'
+                >
+                  Lưu
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-        <div className='flex justify-center md:w-72 md:border-l md:border-l-gray-200'>
-          <div className='flex flex-col items-center'>
-            <div className='w-24 h-24 my-5'>
-              <img
-                src={previewImage || getAvatarUrl(avatar)}
-                alt=''
-                className='object-cover w-full h-full rounded-full'
-              />
-            </div>
-            <InputFile onChange={handleChangeFile} />
-            <div className='mt-3 text-gray-400'>
-              <div>Dung lượng file tối đa 1 MB</div>
-              <div>Định dạng:.JPEG, .PNG</div>
+          <div className='flex justify-center md:w-72 md:border-l md:border-l-gray-200'>
+            <div className='flex flex-col items-center'>
+              <div className='w-24 h-24 my-5'>
+                <img
+                  src={previewImage || getAvatarUrl(avatar)}
+                  alt=''
+                  className='object-cover w-full h-full rounded-full'
+                />
+              </div>
+              <InputFile onChange={handleChangeFile} />
+              <div className='mt-3 text-gray-400'>
+                <div>Dung lượng file tối đa 1 MB</div>
+                <div>Định dạng:.JPEG, .PNG</div>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </FormProvider>
     </div>
   )
 }
