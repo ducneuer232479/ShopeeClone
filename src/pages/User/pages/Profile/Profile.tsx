@@ -13,6 +13,7 @@ import { AppContext } from 'src/contexts/app.context'
 import { setProfileToLS } from 'src/utils/auth'
 import { getAvatarUrl, isAxiosUnprocessableEntityError } from 'src/utils/utils'
 import { ErrorResponse } from 'src/types/utils.type'
+import config from 'src/constants/config'
 
 type FormData = Pick<UserSchema, 'name' | 'address' | 'phone' | 'date_of_birth' | 'avatar'>
 
@@ -107,7 +108,13 @@ export default function Profile() {
 
   const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileFromLocal = event.target.files?.[0]
-    setFile(fileFromLocal)
+    if (fileFromLocal && (fileFromLocal.size >= config.maxSizeUploadAvatar || !fileFromLocal.type.includes('image'))) {
+      toast.error('Dung lượng file tối đa 1 MB. Định dạng:.JPEG, .PNG', {
+        position: 'top-center'
+      })
+    } else {
+      setFile(fileFromLocal)
+    }
   }
 
   useEffect(() => {
@@ -205,7 +212,15 @@ export default function Profile() {
                 className='object-cover w-full h-full rounded-full'
               />
             </div>
-            <input type='file' accept='.jpg,.jpeg,.png' className='hidden' ref={fileInputRef} onChange={onFileChange} />
+            <input
+              type='file'
+              accept='.jpg,.jpeg,.png'
+              className='hidden'
+              ref={fileInputRef}
+              onChange={onFileChange}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onClick={(event) => ((event.target as any).value = null)}
+            />
             <button
               className='flex items-center justify-end h-10 px-6 text-sm text-gray-600 bg-white border rounded-sm shadow-sm'
               type='button'
