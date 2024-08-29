@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useState } from 'react'
+import { InputHTMLAttributes, useState } from 'react'
 import type { UseFormRegister, RegisterOptions } from 'react-hook-form'
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
