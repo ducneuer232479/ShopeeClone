@@ -3,7 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useMutation } from '@tanstack/react-query'
 import authApi from 'src/apis/auth.api'
-import { omit } from 'lodash'
+// Không có tính năng tree-shaking (import mỗi omit nhưng thực ra là import cả thư viện)
+// import { omit } from 'lodash'
+
+// Import chỉ mỗi function omit
+import omit from 'lodash/omit'
 
 import Input from 'src/components/Input'
 import { schema, Schema } from 'src/utils/rules'
