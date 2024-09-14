@@ -13,6 +13,7 @@ import { ObjectSchema } from 'yup'
 import omit from 'lodash/omit'
 import RatingStars from '../RatingStars'
 import { QueryConfig } from 'src/hooks/useQueryConfig'
+import { useTranslation } from 'react-i18next'
 
 interface Props {
   queryConfig: QueryConfig
@@ -31,6 +32,7 @@ const priceSchema = schema.pick(['price_min', 'price_max'])
 
 export default function AsideFilter({ queryConfig, categories }: Props) {
   const { category } = queryConfig
+  const { t } = useTranslation(['home'])
 
   const {
     control,
@@ -87,7 +89,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
             </g>
           </g>
         </svg>
-        Tất cả danh mục
+        {t('aside filter.all categories')}
       </Link>
       <div className='bg-gray-300 h-[1px] my-4' />
       <ul>
@@ -136,7 +138,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
             />
           </g>
         </svg>
-        Bộ lọc tìm kiếm
+        {t('aside filter.filter search')}
       </Link>
       <div className='bg-gray-300 h-[1px] my-4' />
       <div className='my-5'>
