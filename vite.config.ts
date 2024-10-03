@@ -8,7 +8,8 @@ import { visualizer } from 'rollup-plugin-visualizer'
 export default defineConfig({
   plugins: [react(), visualizer()] as any,
   test: {
-    environment: 'jsdom'
+    environment: 'jsdom',
+    setupFiles: ['./jest.setup.ts']
   },
   server: {
     port: 3000
