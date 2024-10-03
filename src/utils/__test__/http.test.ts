@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import http, { Http } from '../http'
+import { Http } from '../http'
 import HttpStatusCode from 'src/constants/httpStatusCode.enum'
 import { setAccessTokenToLS, setRefreshTokenToLS } from '../auth'
 
