@@ -1,18 +1,11 @@
 import { describe, expect, test } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
-
-import userEvent from '@testing-library/user-event'
-
-import App from './App'
-import { BrowserRouter, MemoryRouter } from 'react-router-dom'
-import { logScreen } from './utils/testUtils'
+import { screen, waitFor } from '@testing-library/react'
+import { renderWithRouter } from './utils/testUtils'
+import path from './constants/path'
 
 describe('App', () => {
   test('App render va chuyen trang', async () => {
-    render(<App />, {
-      wrapper: BrowserRouter
-    })
-    const user = userEvent.setup()
+    const { user } = renderWithRouter()
 
     /*
      * waitFor se run callback 1 vai lan
@@ -38,16 +31,16 @@ describe('App', () => {
 
   test('Về trang not found', async () => {
     const badRoute = '/some/bad/route'
-    render(
-      <MemoryRouter initialEntries={[badRoute]}>
-        <App />
-      </MemoryRouter>
-    )
-
+    renderWithRouter({ route: badRoute })
     await waitFor(() => {
       expect(screen.getByText(/Page Not Found/i)).toBeInTheDocument()
     })
+  })
 
-    await logScreen()
+  test('Render trang register', async () => {
+    renderWithRouter({ route: path.register })
+    await waitFor(() => {
+      expect(screen.getByText(/Bạn đã có tài khoản?/i)).toBeInTheDocument()
+    })
   })
 })
