@@ -1,36 +1,36 @@
 import { screen, waitFor, fireEvent } from '@testing-library/dom'
 import path from 'src/constants/path'
-import { renderWithRouter } from 'src/utils/testUtils'
+import { logScreen, renderWithRouter } from 'src/utils/testUtils'
 import { beforeAll, describe, expect, it } from 'vitest'
 
 describe('Login', () => {
+  let emailInput: HTMLInputElement
+  let passwordInput: HTMLInputElement
+  let submitButton: HTMLButtonElement
   beforeAll(async () => {
     renderWithRouter({ route: path.login })
     await waitFor(() => {
       expect(screen.queryByPlaceholderText('Email')).toBeInTheDocument()
     })
+
+    emailInput = document.querySelector('form input[type="email"]') as HTMLInputElement
+    passwordInput = document.querySelector('form input[type="password"]') as HTMLInputElement
+    submitButton = document.querySelector('form button[type="submit"]') as HTMLButtonElement
   })
 
   it('Hien thi loi required khi khong nhap gi', async () => {
-    const submitButton = document.querySelector('form button[type="submit"]') as Element
     fireEvent.submit(submitButton)
 
-    await waitFor(async () => {
-      expect(await screen.findByText('Email là bắt buộc')).toBeTruthy()
-      expect(await screen.findByText('Password là bắt buộc')).toBeTruthy()
+    await waitFor(() => {
+      expect(screen.queryByText('Email là bắt buộc')).toBeTruthy()
+      expect(screen.queryByText('Password là bắt buộc')).toBeTruthy()
     })
-
-    // await logScreen()
   })
 
   it('Hien thi loi required khi khong nhap gi', async () => {
-    const emailInput = document.querySelector('form input[type="email"]') as HTMLInputElement
-    const passwordInput = document.querySelector('form input[type="password"]') as HTMLInputElement
-    const submitButton = document.querySelector('form button[type="submit"]') as HTMLButtonElement
-
     fireEvent.change(emailInput, {
       target: {
-        value: 'test@gmail'
+        value: 'test@'
       }
     })
     fireEvent.change(passwordInput, {
@@ -40,9 +40,29 @@ describe('Login', () => {
     })
     fireEvent.submit(submitButton)
 
-    expect(await screen.findByText('Email không đúng định dạng')).toBeTruthy()
-    expect(await screen.findByText('Độ dài từ 6 - 160 ký tự')).toBeTruthy()
+    await logScreen()
 
-    // await logScreen()
+    await waitFor(() => {
+      expect(screen.queryByText('Email không đúng định dạng')).toBeTruthy()
+      expect(screen.queryByText('Độ dài từ 6 - 160 ký tự')).toBeTruthy()
+    })
+  })
+
+  it('Khong hien thi loi khi nhap lai value dung', async () => {
+    fireEvent.change(emailInput, {
+      target: {
+        value: 'test@gmail.com'
+      }
+    })
+    fireEvent.change(passwordInput, {
+      target: {
+        value: '123456'
+      }
+    })
+
+    await waitFor(() => {
+      expect(screen.queryByText('Email không đúng định dạng')).toBeFalsy()
+      expect(screen.queryByText('Độ dài từ 6 - 160 ký tự')).toBeFalsy()
+    })
   })
 })
