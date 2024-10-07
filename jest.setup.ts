@@ -4,7 +4,6 @@ import { afterAll, afterEach, beforeAll } from 'vitest'
 import { setupServer } from 'msw/node'
 import { http, HttpResponse } from 'msw'
 import config from 'src/constants/config'
-import HttpStatusCode from 'src/constants/httpStatusCode.enum'
 
 const loginRes = {
   message: 'Đăng nhập thành công',
@@ -30,9 +29,11 @@ const loginRes = {
 
 export const restHandlers = [
   http.post(`${config.baseUrl}login`, () => {
-    return new HttpResponse(null, {
-      status: HttpStatusCode.Ok
-    })
+    // return new HttpResponse(null, {
+    //   status: HttpStatusCode.Ok
+    // })
+
+    return HttpResponse.json(loginRes)
   })
 ]
 

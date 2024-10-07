@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [react(), visualizer()] as any,
   test: {
     environment: 'jsdom',
-    setupFiles: ['./jest.setup.ts']
+    setupFiles: path.resolve(__dirname, './jest.setup.ts')
   },
   server: {
     port: 3000
