@@ -1,10 +1,16 @@
+import { waitFor } from '@testing-library/dom'
 import path from 'src/constants/path'
-import { logScreen, renderWithRouter } from 'src/utils/testUtils'
-import { describe, it } from 'vitest'
+import { access_token } from 'src/msw/auth.msw'
+import { setAccessTokenToLS } from 'src/utils/auth'
+import { renderWithRouter } from 'src/utils/testUtils'
+import { describe, expect, it } from 'vitest'
 
 describe('Profile', () => {
   it('Hien thi trang profile', async () => {
-    renderWithRouter({ route: path.profile })
-    await logScreen()
+    setAccessTokenToLS(access_token)
+    const { container } = renderWithRouter({ route: path.profile })
+    await waitFor(() => {
+      expect((container.querySelector('form input[placeholder="Tên"]') as HTMLInputElement).value).toBe('Dư Thanh Được')
+    })
   })
 })
