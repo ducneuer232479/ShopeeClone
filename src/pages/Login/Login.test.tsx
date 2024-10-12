@@ -1,6 +1,6 @@
 import { screen, waitFor, fireEvent } from '@testing-library/dom'
 import path from 'src/constants/path'
-import { logScreen, renderWithRouter } from 'src/utils/testUtils'
+import { renderWithRouter } from 'src/utils/testUtils'
 import { beforeAll, describe, expect, it } from 'vitest'
 
 describe('Login', () => {
@@ -40,8 +40,6 @@ describe('Login', () => {
     })
     fireEvent.submit(submitButton)
 
-    await logScreen()
-
     await waitFor(() => {
       expect(screen.queryByText('Email không đúng định dạng')).toBeTruthy()
       expect(screen.queryByText('Độ dài từ 6 - 160 ký tự')).toBeTruthy()
@@ -66,7 +64,6 @@ describe('Login', () => {
     })
 
     fireEvent.submit(submitButton)
-    await logScreen()
     await waitFor(() => {
       expect(document.querySelector('title')?.textContent).toBe('Trang chủ | Shopee Clone')
     })
